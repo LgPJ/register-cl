@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -23,8 +24,6 @@ public class UserService {
     private UserRepository userRepository;
     @Autowired
     private PhoneRepository phoneRepository;
-    @Autowired
-    private RegexProperties regexProperties;
 
     public ResponseDto<List<User>> findAll() {
 
@@ -38,6 +37,7 @@ public class UserService {
 
         ResponseDto<UserResponse> response = new ResponseDto();
 
+        //Validamos los campos del JSON Request
         if (!userDto.getEmail().matches(new RegexProperties().get("email.regex"))) {
             response.setMessage("formato de correo no valido");
         }
@@ -54,6 +54,7 @@ public class UserService {
             return response;
         }
 
+        //Obtenemos el user si existe
         Optional<User> userEmail = userRepository.findByEmail(userDto.getEmail());
 
         if (userEmail.isPresent()) {
@@ -61,27 +62,39 @@ public class UserService {
             return response;
         }
 
-        User user = new User();
-        user.setPassword(userDto.getPassword());
-        user.setEmail(userDto.getEmail());
-        user.setName(userDto.getName());
-        user.setId(UUID.randomUUID());
-        User userSave = userRepository.save(user);
+        //Mapeamos y guardamos el user
+        User userSave = userRepository.save(mapUser(userDto));
 
+        //Mapeamos y guardamos los telefonos para ese user
         userDto.getPhones().forEach(phoneDto -> {
             Phone phone = new Phone();
             phone.setCityCode(phoneDto.getCitycode());
             phone.setCountryCode(phoneDto.getCountrycode());
             phone.setNumber(phoneDto.getNumber());
             phone.setUser(userSave);
-            phoneRepository.save(phone); // Asumiendo que tienes un repositorio para Phone
+            phoneRepository.save(phone);
         });
 
+        //Mapeamos la respuesta JSON
         UserResponse userResponse = fromUser(response, userSave);
         response.setData(userResponse);
 
         return response;
 
+    }
+
+    private User mapUser(UserDto userDto) {
+        User user = new User();
+        user.setPassword(userDto.getPassword());
+        user.setEmail(userDto.getEmail());
+        user.setName(userDto.getName());
+        user.setId(UUID.randomUUID());
+        user.setCreated(LocalDateTime.now());
+        user.setLastLogin(LocalDateTime.now());
+        user.setModified(LocalDateTime.now());
+        user.setToken("asdfgsdfg");
+        user.setActive(true);
+        return user;
     }
 
     private UserResponse fromUser(ResponseDto<UserResponse> response, User userSave) {
