@@ -24,6 +24,8 @@ public class UserService {
     private UserRepository userRepository;
     @Autowired
     private PhoneRepository phoneRepository;
+    @Autowired
+    private JwtTokenProvider jwtTokenProvider;
 
     public ResponseDto<List<User>> findAll() {
 
@@ -93,7 +95,7 @@ public class UserService {
         user.setCreated(LocalDateTime.now());
         user.setLastLogin(LocalDateTime.now());
         user.setModified(LocalDateTime.now());
-        user.setToken("asdfgsdfg");
+        user.setToken(jwtTokenProvider.generateToken(userDto.getName()));
         user.setActive(true);
         return user;
     }
