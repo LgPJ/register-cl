@@ -97,3 +97,10 @@ Respuesta de Error:
     "message": "Correo ya registrado",
     "data": null
 }
+
+
+
+
+**Diagrama de Solucion**
+
+https://drive.google.com/file/d/1bulI1rm0KpSZxZcRsiyCTcz8z_iE_eKM/view?usp=sharing

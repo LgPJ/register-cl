@@ -68,6 +68,7 @@ public class UserService {
         //Mapeamos y guardamos los telefonos para ese user
         userDto.getPhones().forEach(phoneDto -> {
             Phone phone = new Phone();
+            phone.setId(UUID.randomUUID());
             phone.setCityCode(phoneDto.getCitycode());
             phone.setCountryCode(phoneDto.getCountrycode());
             phone.setNumber(phoneDto.getNumber());

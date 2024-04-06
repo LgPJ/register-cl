@@ -5,6 +5,7 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.UUID;
 
 @Data
 @Entity
@@ -12,8 +13,7 @@ import java.io.Serializable;
 public class Phone implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private UUID id;
     private String number;
     private String cityCode;
     private String countryCode;
@@ -22,11 +22,11 @@ public class Phone implements Serializable {
     @JoinColumn(name = "user_id")
     private User user;
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
